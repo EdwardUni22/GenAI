@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Photon by HTML5 UP</title>
+		<title>Story Generator - Edward Mallia</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -17,36 +17,51 @@
 		<!-- Header -->
 			<section id="header">
 				<div class="inner">
-					<span class="icon solid major fa-cloud"></span>
-					<h1>Hi, I'm <strong>Photon</strong>, another fine<br />
-					little freebie from <a href="http://html5up.net">HTML5 UP</a>.</h1>
-					<p>Accumsan feugiat mi commodo erat lorem ipsum, sed magna<br />
-					lobortis feugiat sapien sed etiam volutpat accumsan.</p>
+					<span class="icon solid major fa-book"></span>
+					<h1>Story <strong>Generator</strong><br />
+					Create unique stories with AI</h1>
+					<p>Generate compelling narratives by selecting tags,<br />
+					choosing styles, and customizing your prompts.</p>
 					<ul class="actions special">
-						<li><a href="#one" class="button scrolly">Discover</a></li>
+						<li><a href="#storyform" class="button scrolly">Start Creating</a></li>
 					</ul>
 				</div>
 			</section>
 
-		<!-- One -->
-			<section id="one" class="main style1">
-				<div class="container">
-					<div class="row gtr-150">
-						<div class="col-6 col-12-medium">
-							<header class="major">
-								<h2>Lorem ipsum dolor adipiscing<br />
-								amet dolor consequat</h2>
-							</header>
-							<p>Adipiscing a commodo ante nunc accumsan et interdum mi ante adipiscing. A nunc lobortis non nisl amet vis sed volutpat aclacus nascetur ac non. Lorem curae et ante amet sapien sed tempus adipiscing id accumsan.</p>
+		<!-- Story Generator Form -->
+		<section id="storyform" class="main style1 special">
+			<div class="container">
+				<h1><strong>Create</strong> Your Story</h1>
+				<form id="storyForm" class="form-style">
+					<div class="row gtr-uniform">
+						<div class="col-6 col-12-xsmall">
+							<input type="text" name="title" id="title" placeholder="Story Title" />
 						</div>
-						<div class="col-6 col-12-medium imp-medium">
-							<span class="image fit"><img src="images/pic01.jpg" alt="" /></span>
+						<div class="col-6 col-12-xsmall">
+							<select name="age-target" id="age-target">
+								<option value="">- Target Age Group -</option>
+								<option value="children">Children (5-12)</option>
+								<option value="young-adult">Young Adult (13-17)</option>
+								<option value="adult">Adult (18+)</option>
+							</select>
+						</div>
+						<div class="col-12">
+							<input type="text" name="tags" id="tags" placeholder="Tags (comma separated: fantasy, adventure, mystery)" />
+						</div>
+						<div class="col-12">
+							<textarea name="prompt" id="prompt" placeholder="Additional details or specific requirements for your story" rows="4"></textarea>
+						</div>
+						<div class="col-12">
+							<ul class="actions special">
+								<li><input type="submit" value="Generate Story" class="button primary" /></li>
+							</ul>
 						</div>
 					</div>
-				</div>
-			</section>
+				</form>
+			</div>
+		</section>
 
-		<!-- Two -->
+		<!-- Two 
 			<section id="two" class="main style2">
 				<div class="container">
 					<div class="row gtr-150">
@@ -73,7 +88,7 @@
 				</div>
 			</section>
 
-		<!-- Three -->
+		
 			<section id="three" class="main style1 special">
 				<div class="container">
 					<header class="major">
@@ -109,7 +124,7 @@
 				</div>
 			</section>
 
-		<!-- Four -->
+		
 			<section id="four" class="main style2 special">
 				<div class="container">
 					<header class="major">
@@ -123,8 +138,7 @@
 				</div>
 			</section>
 
-		<!-- Five -->
-		<!--
+		
 			<section id="five" class="main style1">
 				<div class="container">
 					<header class="major special">
@@ -443,16 +457,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 		<!-- Footer -->
 			<section id="footer">
-				<ul class="icons">
-					<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
-					<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
-					<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
-					<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-					<li><a href="#" class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
-				</ul>
-				<ul class="copyright">
-					<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-				</ul>
+				
 			</section>
 
 		<!-- Scripts -->
@@ -462,6 +467,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script type="module" src="assets/js/storyGenerator.js" defer></script>
 
 	</body>
 </html>
