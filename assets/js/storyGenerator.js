@@ -72,7 +72,10 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
 
         PARAMETER GENERATION RULES:
         - If Title is empty: Generate an engaging, age-appropriate title that connects with the other provided parameters
-        - If Target Age Group is empty: Generate an appropriate age range based on the story elements and complexity (options: 3-5, 6-8, 8-12, 12-15, 15+)
+        - If Target Age Group is empty: Generate an appropriate age range based on these categories:
+            * Children (5-12)
+            * Young Adult (13-17)
+            * Adult (18+)
         - If Tags are empty: Generate 3-5 relevant tags that would create an interesting story
         - If Additional Elements are empty: Generate a creative story prompt that includes character details, plot elements, and a theme or message
 
@@ -107,6 +110,18 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
         - Create rich, detailed scenes rather than brief summaries
         - Balance narrative, dialogue, and description in each part
 
+        4. Image Prompts:
+        - For each story part, create a focused image generation prompt that emphasizes:
+            * Number and roles of people (e.g., "three teenagers", "a mother and child", "a group of warriors")
+            * Setting and environment (e.g., "ancient library", "mountain peak", "underwater cave")
+            * Time of day and atmospheric conditions (e.g., "misty dawn", "stormy night", "golden afternoon")
+            * Key landmarks or objects (e.g., "crystal waterfall", "ruined tower", "magical portal")
+            * Main action or scene composition (e.g., "exploring", "facing each other", "looking up at")
+        - Avoid using specific character names or unnecessary narrative details
+        - Ensure image content is age-appropriate
+        - Match the story's tone and style
+        - You must also provide a list of tags that will be appended to the end of each prompt, these tags will determine the style of the images and should be related to the story's themes and target age group
+
         Your response must be formatted as a valid JSON response according to the following structure, do not include any comments about what you've generated in your response:
 
         {
@@ -116,10 +131,17 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
                 "2": "Second substantial part of the story (development)...",
                 "3": "Third substantial part of the story (conclusion)...",
                 ...
-            }
+            },
+            "image_prompts": {
+                "1": "Detailed image generation prompt for part 1...",
+                "2": "Detailed image generation prompt for part 2...",
+                "3": "Detailed image generation prompt for part 3...",
+                ...
+            },
+            image_style_tags: "Tags related to the style of the images"
         }
 
-        Remember to create an engaging, cohesive narrative that naturally incorporates all specified elements while maintaining appropriate content and language for the target age group. Each part should feel complete and substantial, like a proper chapter or scene in a book.`;
+        Remember to create an engaging, cohesive narrative that naturally incorporates all specified elements while maintaining appropriate content and language for the target age group. Each part should feel complete and substantial, like a proper chapter or scene in a book. Each image prompt should effectively visualize a key moment from its corresponding story part.`;
     
     chatHistory = [
         {
@@ -140,22 +162,39 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
 function displayStory(story, id) {
     const storySection = document.createElement('section');
     storySection.id = id;
-    storySection.className = 'main style2 special';
+    storySection.className = 'main style2';
     
     // Create the story content HTML
     let storyContentHTML = '';
+
     for (let i = 1; i <= Object.keys(story.story).length; i++) {
-        storyContentHTML += `<p class="story-part">${story.story[i]}</p>`;
+        storyContentHTML += `
+        <div class="row gtr-150 aln-middle">
+            ${i % 2 !== 0 ? `
+                <div class="col-6 col-12-xsmall align-right">
+                    <p>${story.story[i]}</p>
+                </div>` : ``}
+
+            <div class="col-6 col-12-xsmall align-center">
+                <span class="image fit ai-image">
+                    <img src="https://image.pollinations.ai/prompt/${story.image_prompts[i]}, ${story.image_style_tags}?width=500&height=300">
+                </span>
+            </div>
+
+            ${i % 2 === 0 ? `
+                <div class="col-6 col-12-xsmall">
+                    <p>${story.story[i]}</p>
+                </div>` : ``}
+        </div>`;
     }
 
     storySection.innerHTML = `
-        <div class="container">
-            <h2>${story.title}</h2>
-            <div class="story-content">
+        <div class="background-blur">
+            <div class="container">
+                <h2 class="align-center">${story.title}</h2>
                 ${storyContentHTML}
             </div>
-        </div>
-    `;
+        </div>`;
     
     document.body.insertBefore(storySection, document.getElementById('footer'));
     storySection.scrollIntoView({ behavior: 'smooth' });
@@ -181,7 +220,7 @@ async function adjustStory() {
     console.log('Adjustment Details:', adjustmentDetails);
 
     const adjustment = `
-        You are a professional storyteller making adjustments to a previously generated story. Review the changes requested and modify the story while maintaining its original structure and quality.
+        You are a professional storyteller making adjustments to a previously generated story. Review the changes requested and the previous story's image prompts and style tags to ensure consistency.
 
         ADJUSTMENT PARAMETERS:
         Type of Adjustment: ${adjustmentType}
@@ -189,7 +228,7 @@ async function adjustStory() {
         Requested Changes: ${adjustmentDetails}
 
         REQUIREMENTS:
-        1. Maintain:
+        1. Story Maintenance:
         - Original story's age-appropriate content and language
         - Core narrative elements and character consistency
         - JSON structure and formatting
@@ -202,8 +241,14 @@ async function adjustStory() {
         - Ensure adjustments align with the story's overall tone
         - Preserve the story's coherent structure
         - If adjusting a specific part, maintain smooth transitions with adjacent parts
-        - If any part exceeds 400 words after adjustments, split it into multiple parts while maintaining narrative flow
-        - When splitting parts, renumber subsequent parts accordingly
+        - If any part exceeds 400 words after adjustments, split it into multiple parts
+
+        3. Image Content Review:
+        - Review existing image prompts for modified or new parts
+        - Ensure image prompts match any adjusted story content
+        - Update or create new image prompts for split parts
+        - Verify all image prompts maintain age-appropriate content
+        - Review style tags for relevance with any tone or theme changes
 
         Your response must maintain the same JSON format:
         {
@@ -213,10 +258,17 @@ async function adjustStory() {
                 "2": "Second substantial part...",
                 "3": "Third substantial part...",
                 ...
-            }
+            },
+            "image_prompts": {
+                "1": "Detailed image generation prompt for part 1...",
+                "2": "Detailed image generation prompt for part 2...",
+                "3": "Detailed image generation prompt for part 3...",
+                ...
+            },
+            "image_style_tags": "Tags related to the style of the images"
         }
 
-        Make only the requested adjustments while preserving the story's overall quality and integrity.`;
+        Make only the requested adjustments while ensuring all story parts, image prompts, and style tags remain cohesive and appropriate for the target audience.`;
 
     chatHistory.push({
         role: 'user',
