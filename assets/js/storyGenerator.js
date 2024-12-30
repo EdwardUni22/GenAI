@@ -1,6 +1,11 @@
 let chatHistory = [];
 
 async function generateStory() {
+
+    if (chatHistory.length > 3) {
+        chatHistory = chatHistory.slice(-3);
+    }
+
     try {
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -169,20 +174,20 @@ function displayStory(story, id) {
 
     for (let i = 1; i <= Object.keys(story.story).length; i++) {
         storyContentHTML += `
-        <div class="row gtr-150 aln-middle">
             ${i % 2 !== 0 ? `
-                <div class="col-6 col-12-xsmall align-right">
+            <div class="row gtr-150 aln-middle aln-center">
+                <div class="col-6 col-12-small align-right">
                     <p>${story.story[i]}</p>
-                </div>` : ``}
+                </div>` : `<div class="row gtr-150 aln-middle aln-center left-column">`}
 
-            <div class="col-6 col-12-xsmall align-center">
+            <div class="col-6 col-12-small align-center">
                 <span class="image fit ai-image">
-                    <img src="https://image.pollinations.ai/prompt/${story.image_prompts[i]}, ${story.image_style_tags}?width=500&height=300">
+                    <img src="https://image.pollinations.ai/prompt/${story.image_prompts[i]}, ${story.image_style_tags}?width=500&height=300&nologo=true&safe=true" onerror="this.onerror=null; this.src=this.src;">
                 </span>
             </div>
 
             ${i % 2 === 0 ? `
-                <div class="col-6 col-12-xsmall">
+                <div class="col-6 col-12-small">
                     <p>${story.story[i]}</p>
                 </div>` : ``}
         </div>`;
@@ -191,7 +196,7 @@ function displayStory(story, id) {
     storySection.innerHTML = `
         <div class="background-blur">
             <div class="container">
-                <h2 class="align-center">${story.title}</h2>
+                <h1 class="align-center">${story.title}</h1>
                 ${storyContentHTML}
             </div>
         </div>`;
@@ -304,12 +309,12 @@ function insertAdjustmentForm(story) {
 
     form.innerHTML = `
         <div class="container">
-            <h2 class="align-center"><strong>Adjust</strong> Your Story</h2>
+            <h1 class="align-center"><strong>Adjust</strong> Your Story</h1>
             <form id="adjustmentForm" class="form-style">
 				<div class="row gtr-uniform">
                     <div class="col-6 col-12-xsmall col-12">
                         <label for="adjustmentType">What would you like to adjust?</label>
-                        <select id="adjustmentType" name="adjustmentType" required>
+                        <select id="adjustmentType" name="adjustmentType">
                             <option value="">Select an option</option>
                             <option value="tone">Change the tone</option>
                             <option value="length">Make it longer/shorter</option>
@@ -337,7 +342,6 @@ function insertAdjustmentForm(story) {
                             name="adjustmentDetails" 
                             rows="4" 
                             placeholder="Be specific about what you'd like to change..."
-                            required
                         ></textarea>
                     </div>
 
