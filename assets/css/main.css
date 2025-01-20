@@ -2139,7 +2139,6 @@ input, select, textarea {
 		display: block;
 		font-size: 0.9em;
 		font-weight: 400;
-		margin: 0 0 1em 0;
 	}
 
 	input[type="text"],
@@ -2161,6 +2160,7 @@ input, select, textarea {
 		padding: 0 1em;
 		text-decoration: none;
 		width: 100%;
+		resize: vertical;
 	}
 
 		input[type="text"]:invalid,

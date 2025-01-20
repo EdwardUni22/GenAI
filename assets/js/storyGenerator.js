@@ -36,16 +36,58 @@ async function generateStory() {
             return JSON.parse(content);
         } catch (error) {
             console.error('Error parsing JSON response:', error);
+            alert('Prompt failed to generate a story. Please try again or adjust your prompt.');
             throw new Error('Failed to parse story response as JSON');
         }
     } catch (error) {
         console.error('Error:', error);
+        alert('Failed to generate story. Please try again.');
+        throw error;
+    }
+}
+
+async function checkPrompt(prompt) {
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer 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`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                messages: [
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                model: 'llama-guard-3-8b'
+            })
+        });
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content;
+        console.log('Prompt check:', content);
+
+        if (content.includes('unsafe')) {
+            alert('The prompt contains unsafe content. Please adjust your prompt and try again.');
+            throw new Error('Prompt contains unsafe content');
+        }
+    }
+    catch (error) {
+        console.error('Error:', error);
+        alert('Failed to check the prompt. Please try again.');
         throw error;
     }
 }
 
 document.getElementById('storyForm').addEventListener('submit', async (event) => {
     event.preventDefault();
+
+    if (document.getElementById('storyButton').classList.contains('disabled')) {
+        return;
+    }
+    document.getElementById('storyButton').classList.add('disabled');
 
     const existingStory = document.getElementById('story');
     if (existingStory) {
@@ -62,56 +104,71 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
         existingAdjustment.remove();
     }
     
-    const title = document.getElementById('title').value;
     const ageTarget = document.getElementById('age-target').value;
-    const tags = document.getElementById('tags').value;
+    const storyLength = document.getElementById('story-length').value;
+    const genre = document.getElementById('genre').value;
+    const storyTheme = document.getElementById('story-theme').value;
+    const setting = document.getElementById('setting').value;
+    const protagonist = document.getElementById('protagonist').value;
     const customPrompt = document.getElementById('prompt').value;
 
-    console.log('Title:', title);
+    try {
+        checkPrompt(customPrompt);
+    } catch (error) {
+        document.getElementById('storyButton').classList.remove('disabled');
+        return;
+    }
+
     console.log('Target Age Group:', ageTarget);
-    console.log('Tags:', tags);
-    console.log('Additional Elements:', customPrompt);
+    console.log('Story Length:', storyLength);
+    console.log('Genre:', genre);
+    console.log('Story Theme:', storyTheme);
+    console.log('Setting:', setting);
+    console.log('Protagonist:', protagonist);
+    console.log('Custom Prompt:', customPrompt);
     
     const prompt = `
         You are a professional storyteller specialized in creating engaging narratives. If any of the following parameters are empty, generate appropriate values based on these rules. If any parameters contain spelling mistakes or grammatical errors, correct them in your response while maintaining the intended meaning.
 
         PARAMETER GENERATION RULES:
-        - If Title is empty: Generate an engaging, age-appropriate title that connects with the other provided parameters
+        - Generate an engaging, age-appropriate title that connects with the other provided parameters
         - If Target Age Group is empty: Generate an appropriate age range based on these categories:
             * Children (5-12)
             * Young Adult (13-17)
             * Adult (18+)
-        - If Tags are empty: Generate 3-5 relevant tags that would create an interesting story
+        - If any other parameter is empty: Generate a suitable value based on the provided parameters
         - If Additional Elements are empty: Generate a creative story prompt that includes character details, plot elements, and a theme or message
 
         STORY PARAMETERS:
-        Title: ${title}
         Target Age Group: ${ageTarget}
-        Tags: ${tags}
+        Story Length: ${storyLength}
+        Genre: ${genre}
+        Story Theme: ${storyTheme}
+        Setting: ${setting}
+        Protagonist: ${protagonist}
         Additional Elements: ${customPrompt}
 
         REQUIREMENTS:
         1. Create a story that strictly adheres to:
-        - The specified or generated title
         - Age-appropriate content and language for {age_range}
-        - Themes and elements from the provided or generated tags
-        - Elements from the custom prompt or generated story elements
+        - Themes and elements from the provided or generated parameters
+        - A cohesive narrative structure with engaging characters
 
         2. Story Structure:
-        - Divide the story into 3-5 substantial parts
-        - Each part should be a complete scene or chapter (multiple paragraphs)
-        - Part 1: Opening chapter (setup, character introduction, world-building)
-        - Part 2-3: Development chapters (rising action, conflicts, character growth)
-        - Final Part: Concluding chapter (climax and resolution)
-        - Each part should be approximately 250-400 words
+        - Divide the story into a number of substantial parts
+        - Each part should be one paragraph (250-400 words)
         - Ensure smooth transitions between parts
+        - First part: Introduction and setting the scene
+        - Beginning-Middle parts: Development of plot and characters
+        - Middle-End parts: Climax and resolution
+        - Final part: Conclusion and closing remarks
 
         3. Content Guidelines:
         - Maintain consistent tone throughout
         - Include engaging dialogue when appropriate
         - Use descriptive language suitable for age group
         - Ensure all content is appropriate for target age
-        - Incorporate specified tags naturally into the narrative
+        - Incorporate specified parameters naturally into the story
         - Create rich, detailed scenes rather than brief summaries
         - Balance narrative, dialogue, and description in each part
 
@@ -160,6 +217,8 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
         displayStory(story, 'story');
         insertAdjustmentForm(story);
     } catch (error) {
+        alert('Failed to generate story. Please try again.');
+        document.getElementById('storyButton').classList.remove('disabled');
         throw error;
     }
 });
@@ -202,10 +261,16 @@ function displayStory(story, id) {
         </div>`;
     
     document.body.insertBefore(storySection, document.getElementById('footer'));
+    document.getElementById(`${id}Button`).classList.remove('disabled');
     storySection.scrollIntoView({ behavior: 'smooth' });
 }
 
 async function adjustStory() {
+    if (document.getElementById('adjustmentButton').classList.contains('disabled')) {
+        return;
+    }
+    document.getElementById('adjustmentButton').classList.add('disabled');
+
     const existingAdjustment = document.getElementById('adjustment');
     if (existingAdjustment) {
         existingAdjustment.remove();
@@ -216,7 +281,18 @@ async function adjustStory() {
     if (adjustmentType === 'specific') {
         storyPart = document.getElementById('storyPart').value;
     }
+    const lengthChange = document.getElementById('lengthChange').value;
+    const plotChange = document.getElementById('plotChange').value;
+    const characterChange = document.getElementById('characterChange').value;
+    const styleChange = document.getElementById('styleChange').value;
     const adjustmentDetails = document.getElementById('adjustmentDetails').value;
+
+    try {
+        checkPrompt(adjustmentDetails);
+    } catch (error) {
+        document.getElementById('adjustmentButton').classList.remove('disabled');
+        return;
+    }
 
     console.log('Adjustment Type:', adjustmentType);
     if (adjustmentType === 'specific') {
@@ -228,9 +304,16 @@ async function adjustStory() {
         You are a professional storyteller making adjustments to a previously generated story. Review the changes requested and the previous story's image prompts and style tags to ensure consistency.
 
         ADJUSTMENT PARAMETERS:
-        Type of Adjustment: ${adjustmentType}
-        ${adjustmentType === 'specific' ? `Part to Adjust: Part ${storyPart}` : 'Adjust entire story'}
-        Requested Changes: ${adjustmentDetails}
+        Apply adjustments to: ${adjustmentType === 'specific' ? `Specific Part: Part ${storyPart}` : 'Entire story'}
+        Length Adjustment: ${lengthChange}
+        Plot Modification: ${plotChange}
+        Character Adjustment: ${characterChange}
+        Style Refinement: ${styleChange}
+        Additional Adjustment Details: ${adjustmentDetails}
+
+        PARAMETER INSTRUCTIONS:
+        - Adjust the story based on the provided parameters and details
+        - If any parameter is empty, do not make changes related to that parameter
 
         REQUIREMENTS:
         1. Story Maintenance:
@@ -253,7 +336,9 @@ async function adjustStory() {
         - Ensure image prompts match any adjusted story content
         - Update or create new image prompts for split parts
         - Verify all image prompts maintain age-appropriate content
+        - Avoid unnecessary and minor changes to image prompts
         - Review style tags for relevance with any tone or theme changes
+        - Only change the image style tags if the story's tone or theme has significantly shifted
 
         Your response must maintain the same JSON format:
         {
@@ -293,6 +378,8 @@ async function adjustStory() {
             ).join('')
         }
     } catch (error) {
+        alert('Failed to adjust the story. Please try again.');
+        document.getElementById('adjustmentButton').classList.remove('disabled');
         throw error;
     }
 }
@@ -313,18 +400,12 @@ function insertAdjustmentForm(story) {
             <form id="adjustmentForm" class="form-style">
 				<div class="row gtr-uniform">
                     <div class="col-6 col-12-xsmall col-12">
-                        <label for="adjustmentType">What would you like to adjust?</label>
+                        <label for="adjustmentType">Apply adjustments to?</label>
                         <select id="adjustmentType" name="adjustmentType">
-                            <option value="">Select an option</option>
-                            <option value="tone">Change the tone</option>
-                            <option value="length">Make it longer/shorter</option>
-                            <option value="complexity">Adjust complexity</option>
-                            <option value="characters">Modify characters</option>
-                            <option value="ending">Change the ending</option>
-                            <option value="specific">Specific part adjustment</option>
+                            <option value="entire">Entire story</option>
+                            <option value="specific">Specific part</option>
                         </select>
                     </div>
-                
                 
                     <div class="col-6 col-12-xsmall" id="partSelector" style="display: none;">
                         <label for="storyPart">Which part would you like to adjust?</label>
@@ -335,19 +416,69 @@ function insertAdjustmentForm(story) {
                         </select>
                     </div>
 
+                    <div class="col-6 col-12-xsmall" id="lengthOptions">
+                        <label for="lengthChange">Length Adjustment</label>
+                        <select name="lengthChange" id="lengthChange">
+                            <option value="">- Select Length Change -</option>
+                            <option value="much-shorter">Much Shorter</option>
+                            <option value="slightly-shorter">Slightly Shorter</option>
+                            <option value="slightly-longer">Slightly Longer</option>
+                            <option value="much-longer">Much Longer</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6 col-12-xsmall" id="plotOptions">
+                        <label for="plotChange">Plot Modification</label>
+                        <select name="plotChange" id="plotChange">
+                            <option value="">- Select Plot Change -</option>
+                            <option value="pacing">Change Pacing</option>
+                            <option value="conflict">Modify Conflict</option>
+                            <option value="story-arc">Alter Story Arc</option>
+                            <option value="ending">Revise Ending</option>
+                            <option value="plot-twist">Add Plot Twist</option>
+                            <option value="description">Enhance Description</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6 col-12-xsmall" id="characterOptions">
+                        <label for="characterChange">Character Adjustment</label>
+                        <select name="characterChange" id="characterChange">
+                            <option value="">- Select Character Change -</option>
+                            <option value="main-character">Develop Main Character</option>
+                            <option value="character-details">Add Character Details</option>
+                            <option value="relationships">Modify Relationships</option>
+                            <option value="motivations">Change Character Motivations</option>
+                            <option value="dialogue">Adjust Character Dialogue</option>
+                            <option value="character-arc">Enhance Character Arc</option>
+                        </select>
+                    </div>
+
+                    <div class="col-6 col-12-xsmall" id="styleOptions">
+                        <label for="styleChange">Style Refinement</label>
+                        <select name="styleChange" id="styleChange">
+                            <option value="">- Select Style Change -</option>
+                            <option value="descriptive">More Descriptive</option>
+                            <option value="dialogue">More Dialogue</option>
+                            <option value="action">More Action</option>
+                            <option value="monologue">More Internal Monologue</option>
+                            <option value="perspective">Change Narrative Perspective</option>
+                            <option value="complexity">Adjust Language Complexity</option>
+                        </select>
+                    </div>
+
                     <div class="col-12">
                         <label for="adjustmentDetails">Describe your requested changes:</label>
                         <textarea 
                             id="adjustmentDetails" 
                             name="adjustmentDetails" 
-                            rows="4" 
-                            placeholder="Be specific about what you'd like to change..."
+                            rows="3" 
+                            placeholder="Add extra details about what you'd like to change..."
                         ></textarea>
                     </div>
 
                     <div class="col-12">
                         <ul class="actions special">
-                            <li><input type="submit" value="Adjust Story" class="button" /></li>
+                            <li><input id="adjustmentButton" type="submit" value="Adjust Story" class="button" /></li>
                         </ul>
                     </div>
                 </div>

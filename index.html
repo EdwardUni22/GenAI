@@ -21,7 +21,7 @@
 					<h1>Story <strong>Generator</strong><br />
 					Create unique stories with AI</h1>
 					<p>Generate compelling narratives by selecting tags,<br />
-					choosing styles, and customizing your prompts.</p>
+					choosing styles, and customising your prompts.</p>
 					<ul class="actions special">
 						<li><a href="#storyform" class="button scrolly">Start Creating</a></li>
 					</ul>
@@ -35,9 +35,6 @@
 				<form id="storyForm" class="form-style">
 					<div class="row gtr-uniform">
 						<div class="col-6 col-12-xsmall">
-							<input type="text" name="title" id="title" placeholder="Story Title" />
-						</div>
-						<div class="col-6 col-12-xsmall">
 							<select name="age-target" id="age-target">
 								<option value="">- Target Age Group -</option>
 								<option value="children">Children (5-12)</option>
@@ -45,15 +42,67 @@
 								<option value="adult">Adult (18+)</option>
 							</select>
 						</div>
-						<div class="col-12">
-							<input type="text" name="tags" id="tags" placeholder="Tags (comma separated: fantasy, adventure, mystery)" />
+						<div class="col-6 col-12-xsmall">
+							<select name="story-length" id="story-length">
+								<option value="">- Story Length -</option>
+								<option value="short (2-3 parts)">Short Story</option>
+								<option value="medium (3-5 parts)">Medium Story</option>
+								<option value="long (5-8 parts)">Long Story</option>
+							</select>
+						</div>
+						<div class="col-6 col-12-xsmall">
+							<select name="genre" id="genre">
+								<option value="">- Genre -</option>
+								<option value="fantasy">Fantasy</option>
+								<option value="mystery">Mystery</option>
+								<option value="romance">Romance</option>
+								<option value="sci-fi">Science Fiction</option>
+								<option value="adventure">Adventure</option>
+								<option value="horror">Horror</option>
+								<option value="comedy">Comedy</option>
+								<option value="historical-fiction">Historical Fiction</option>
+							</select>
+						</div>
+						<div class="col-6 col-12-xsmall">
+							<select name="story-theme" id="story-theme">
+								<option value="">- Story Theme -</option>
+								<option value="coming-of-age">Coming of Age</option>
+								<option value="good-vs-evil">Good vs Evil</option>
+								<option value="love-loss">Love and Loss</option>
+								<option value="survival">Survival</option>
+								<option value="mystery">Mystery</option>
+								<option value="redemption">Redemption</option>
+								<option value="discovery">Discovery</option>
+							</select>
+						</div>
+						<div class="col-6 col-12-xsmall">
+							<select name="setting" id="setting">
+								<option value="">- Setting -</option>
+								<option value="urban">Urban City</option>
+								<option value="rural">Rural Countryside</option>
+								<option value="fantasy-realm">Fantasy Realm</option>
+								<option value="space">Space/Other Planets</option>
+								<option value="underwater">Underwater World</option>
+								<option value="mountains">Mountain Range</option>
+								<option value="desert">Desert</option>
+							</select>
+						</div>
+						<div class="col-6 col-12-xsmall">
+							<select name="protagonist" id="protagonist">
+								<option value="">- Protagonist Type -</option>
+								<option value="human">Human</option>
+								<option value="animal">Animal</option>
+								<option value="mythical">Mythical Creature</option>
+								<option value="robot">Robot/AI</option>
+								<option value="supernatural">Supernatural Being</option>
+							</select>
 						</div>
 						<div class="col-12">
-							<textarea name="prompt" id="prompt" placeholder="Additional details or specific requirements for your story" rows="4"></textarea>
+							<textarea name="prompt" id="prompt" placeholder="Additional details or specific requirements for your story" rows="3"></textarea>
 						</div>
 						<div class="col-12">
 							<ul class="actions special">
-								<li><input type="submit" value="Generate Story" class="button primary" /></li>
+								<li><input id="storyButton" type="submit" value="Generate Story" class="button primary" /></li>
 							</ul>
 						</div>
 					</div>
