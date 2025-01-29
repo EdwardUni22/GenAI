@@ -7,9 +7,21 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
+#footerline {
+	background: #ffffff;
+    height: 6em;
+    left: 50%;
+    position: absolute;
+    width: 1px;
+	transform: translateY(-100%);
+}
+
+#footeradjust {
+	display: none;
+}
 
 .ai-image {
-	border: 5px solid lightgrey !important;
+	border: 2px solid lightgrey !important;
 	border-radius: 10px !important;
 }
 
@@ -17,24 +29,23 @@
 	width: 100%;
 	height: 100%;
 	backdrop-filter: blur(5px);
-	/* margin-top: -6em; */
 	padding-top: 6em;
-	/* margin-bottom: -4em; */
 	padding-bottom: 4em;
 }
 
 @media screen and (max-width: 1140px) {
     .background-blur {
-        /* margin-top: -4em; */
         padding-top: 4em;
-        /* margin-bottom: -2em; */
         padding-bottom: 2em;
     }
+
+	#footerline {
+		height : 4em;
+	}
 }
 
 @media screen and (max-width: 980px) {
     .background-blur {
-        /* margin: -5em -3em -3em -3em; */
         padding: 5em 3em 3em 3em;
     }
 
@@ -49,28 +60,40 @@
 	.left-column {
 		flex-direction: column-reverse !important;
 	}
+
+	#footerline {
+		height : 5em;
+	}
 }
 
 @media screen and (max-width: 736px) {
     .background-blur {
-        /* margin: -3em -1.5em -1em -1.5em; */
         padding: 3em 1.5em 1em 1.5em;
     }
 
+	#footerline {
+		height : 3em;
+	}
 }
 
 @media screen and (max-width: 480px) {
     .background-blur {
-        /* margin: -2em -1.5em -0.1em -1.5em; */
         padding: 2em 1.5em 0.1em 1.5em;
     }
+
+	#footerline {
+		height : 2em;
+	}
 }
 
 @media screen and (max-width: 320px) {
     .background-blur {
-        /* margin: -2em -1em -0.1em -1em; */
         padding: 2em 1em 0.1em 1em;
     }
+
+	#footerline {
+		height : 2em;
+	}
 }
 
 .main.style2 {
@@ -2160,7 +2183,7 @@ input, select, textarea {
 		padding: 0 1em;
 		text-decoration: none;
 		width: 100%;
-		resize: vertical;
+		resize: none;
 	}
 
 		input[type="text"]:invalid,
@@ -2430,7 +2453,7 @@ input, select, textarea {
 	}
 
 		.image img {
-			border-radius: 4px;
+			border-radius: 10px;
 			display: block;
 		}
 

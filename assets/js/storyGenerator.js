@@ -47,6 +47,9 @@ async function generateStory() {
 }
 
 async function checkPrompt(prompt) {
+    if (prompt === '') {
+        return true;
+    }
     try {
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -71,14 +74,15 @@ async function checkPrompt(prompt) {
 
         if (content.includes('unsafe')) {
             alert('The prompt contains unsafe content. Please adjust your prompt and try again.');
-            throw new Error('Prompt contains unsafe content');
+            return false
         }
     }
     catch (error) {
         console.error('Error:', error);
         alert('Failed to check the prompt. Please try again.');
-        throw error;
+        return false;
     }
+    return true;
 }
 
 document.getElementById('storyForm').addEventListener('submit', async (event) => {
@@ -99,6 +103,8 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
         existingAdjustmentForm.remove();
     }
 
+    document.getElementById('footeradjust').style.display = 'none';
+
     const existingAdjustment = document.getElementById('adjustment');
     if (existingAdjustment) {
         existingAdjustment.remove();
@@ -111,10 +117,10 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
     const setting = document.getElementById('setting').value;
     const protagonist = document.getElementById('protagonist').value;
     const customPrompt = document.getElementById('prompt').value;
+    
+    const isSafe = await checkPrompt(customPrompt);
 
-    try {
-        checkPrompt(customPrompt);
-    } catch (error) {
+    if (!isSafe) {
         document.getElementById('storyButton').classList.remove('disabled');
         return;
     }
@@ -132,12 +138,7 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
 
         PARAMETER GENERATION RULES:
         - Generate an engaging, age-appropriate title that connects with the other provided parameters
-        - If Target Age Group is empty: Generate an appropriate age range based on these categories:
-            * Children (5-12)
-            * Young Adult (13-17)
-            * Adult (18+)
-        - If any other parameter is empty: Generate a suitable value based on the provided parameters
-        - If Additional Elements are empty: Generate a creative story prompt that includes character details, plot elements, and a theme or message
+        - If any parameter is empty, choose a suitable value based on the provided parameters
 
         STORY PARAMETERS:
         Target Age Group: ${ageTarget}
@@ -150,13 +151,13 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
 
         REQUIREMENTS:
         1. Create a story that strictly adheres to:
-        - Age-appropriate content and language for {age_range}
+        - Age-appropriate content and language for the target age group
         - Themes and elements from the provided or generated parameters
         - A cohesive narrative structure with engaging characters
 
         2. Story Structure:
         - Divide the story into a number of substantial parts
-        - Each part should be one paragraph (250-400 words)
+        - Each part should be one paragraph
         - Ensure smooth transitions between parts
         - First part: Introduction and setting the scene
         - Beginning-Middle parts: Development of plot and characters
@@ -189,9 +190,9 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
         {
             "title": "The Story Title",
             "story": {
-                "1": "First substantial part of the story (opening chapter)...",
-                "2": "Second substantial part of the story (development)...",
-                "3": "Third substantial part of the story (conclusion)...",
+                "1": "First part of the story (opening chapter)...",
+                "2": "Second part of the story (development)...",
+                "3": "Third part of the story (conclusion)...",
                 ...
             },
             "image_prompts": {
@@ -263,6 +264,10 @@ function displayStory(story, id) {
     document.body.insertBefore(storySection, document.getElementById('footer'));
     document.getElementById(`${id}Button`).classList.remove('disabled');
     storySection.scrollIntoView({ behavior: 'smooth' });
+
+    if (id === 'adjustment') {
+        document.getElementById('footeradjust').style.display = 'block';
+    }
 }
 
 async function adjustStory() {
@@ -287,9 +292,9 @@ async function adjustStory() {
     const styleChange = document.getElementById('styleChange').value;
     const adjustmentDetails = document.getElementById('adjustmentDetails').value;
 
-    try {
-        checkPrompt(adjustmentDetails);
-    } catch (error) {
+    const isSafe = await checkPrompt(adjustmentDetails);
+
+    if (!isSafe) {
         document.getElementById('adjustmentButton').classList.remove('disabled');
         return;
     }
@@ -470,8 +475,8 @@ function insertAdjustmentForm(story) {
                         <label for="adjustmentDetails">Describe your requested changes:</label>
                         <textarea 
                             id="adjustmentDetails" 
-                            name="adjustmentDetails" 
-                            rows="3" 
+                            name="adjustmentDetails"
+                            maxlength="100"
                             placeholder="Add extra details about what you'd like to change..."
                         ></textarea>
                     </div>
