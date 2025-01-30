@@ -30,3 +30,10 @@
 		$('.scrolly').scrolly();
 
 })(jQuery);
+
+function regenImage(image) {
+	if (image.src.indexOf('&seed=') > -1) {
+		image.src = image.src.substring(0, image.src.indexOf('&seed='));
+	}
+    image.src = image.src + '&seed=' + Math.floor(Math.random() * 99999);
+}

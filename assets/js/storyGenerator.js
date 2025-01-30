@@ -240,7 +240,7 @@ function displayStory(story, id) {
 
             <div class="col-6 col-12-small align-center">
                 <span class="image fit ai-image">
-                    <img src="https://image.pollinations.ai/prompt/${story.image_prompts[i]}, ${story.image_style_tags}?width=500&height=300&nologo=true&safe=true" onerror="this.src=this.src + '&seed=${Math.floor(Math.random() * 99999)}';">
+                    <img src="https://image.pollinations.ai/prompt/${story.image_prompts[i]}, ${story.image_style_tags}?width=512&height=320&nologo=true&safe=true" onerror="regenImage(this)"/>
                 </span>
             </div>
 
