@@ -44,7 +44,7 @@ async function generateStory(adjustment=false) {
                         - Key landmarks or focal points
                 Finally, generate a list of artistic style tags that will go at the end of each image prompt, these will ensure consistency across the style and design of the generated images
                 Remember to maintain the established narrative voice and ensure all content, including image prompts, remains appropriate for the target age group. Each scene should feel complete and purposeful, contributing to the overall story arc while staying true to the original outline.
-                Return your response in the following JSON format:
+                Return your response in the following JSON format, all entries should be plain text with no formatting:
                 {
                     "title": "The Story Title",
                     "story": {
@@ -189,10 +189,10 @@ document.getElementById('storyForm').addEventListener('submit', async (event) =>
     
     const prompt = `
         As a professional storyteller, create a structured outline for a **${storyLength}** story in the **${genre}** genre, aimed at **${ageTarget}**. The story should follow a **${protagonist}** protagonist in a **${setting}** setting, exploring the theme of **${storyTheme}**. Consider **${customPrompt}** as additional elements to incorporate.
-        The details emphasised with **text** are the user inputted parameters that should serve as the core of the story.
+        The details emphasised with **text** are the user inputted parameters that should serve as the core concepts of the story.
         Your task is to:
             1. Define the overarching narrative structure and flow of the story
-            2. Break the story into logical parts (3-8 parts, as needed or requested)
+            2. Break the story into logical parts (short: ~3 parts, medium: ~5 parts, long: ~7 parts)
             3. For each part, provide a brief description (2 sentences) that outlines:
                 - The key events and plot developments
                 - Character interactions and emotional beats
@@ -319,7 +319,7 @@ async function adjustStory() {
             - Update image prompts only if the old ones no longer match the story
             - Do not change the image style tags unless tone/theme changes significantly as this forces all images to be regenerated
             - Make only the requested changes while preserving the story's overall coherence and quality.
-        Return the modified story in the original JSON format:
+        Return the modified story in the original JSON format, all entries should be plain text with no formatting:
         {
             "title": "The Story Title",
             "story": {
